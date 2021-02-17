@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Temperature Hot</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background: url(images/bg-image.jpg) no-repeat;
+            background-size: cover;
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="col-md-6 m-auto py-5">
+            <div class="input-group mb-3">
+                <input id="weatherInput" type="text" class="form-control" placeholder="Enter a location for Weather ...">
+                <div class="input-group-append">
+                    <button id="submit"  type="button" class="btn btn-danger">Search</button>
+                </div>
+            </div>
+        </div>
+        <div class="weather-status text-white text-center">
+            <img id="cloudsImg" src="https://openweathermap.org/img/wn/02d@2x.png" alt="">
+            <h1 id="place">Dhaka</h1>
+            <h3><span id="temp">38.06</span>&deg;C</h3>
+            <h1 id="clouds" class="lead">Clouds</h1>
+        </div>
+        <div class="d-flex justify-content-center ">
+            <div id="spinner" class=" spinner-border text-secondary d-none " role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+        </div>
+    </div>
+
+    <script>
+        const weatherInput = document.getElementById('weatherInput')
+        const submitButton = document.getElementById('submit')
+
+
+        weatherInput.addEventListener("keypress", function(event) {
+        
+        if (event.key == 'Enter'){
+            
+            submitButton.click();
+        }
+        });
+
+
+        submitButton.addEventListener('click', () => {
+            apiData(weatherInput.value)
+            
+        })
+        
+        const apiData = (cityName) =>{
+            spinnerLoading(true)
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&appid=7e6650e14ef1daef0fe64f80c21a23d0`
+            fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            displydata(data)
+        })
+
+        }
+
+        const displydata = (disply) =>{
+            const cloudsImg = document.getElementById('cloudsImg')
+            const place = document.getElementById('place')
+            const temp = document.getElementById('temp')
+            const clouds= document.getElementById('clouds')
+            place.innerText = disply.name
+            temp.innerText = disply.main.temp
+            clouds.innerText = disply.weather[0].main;
+            cloudsImg.src = `https://openweathermap.org/img/wn/${disply.weather[0].icon}@2x.png`
+            spinnerLoading(false)
+
+        }
+        
+       const spinnerLoading = (show) =>{
+           const spinners = document.getElementById('spinner')
+           if (show) {
+            spinners.classList.remove('d-none')
+           }
+           else{
+            spinners.classList.add('d-none')
+           }
+       }
+
+        document.getElementById("weatherInput").addEventListener("keypress", function(event) {
+            if (event.keyCode == 13)
+            document.getElementById("submit").click();
+            document.getElementById('weatherInput').value = '';
+        });
+    
+    </script>
+</body>
+
+</html>
